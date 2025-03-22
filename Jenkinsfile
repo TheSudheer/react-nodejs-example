@@ -20,7 +20,7 @@ pipeline {
                 script {
                     sshagent(['ec2-server-key']) {
                         def dockerCmd = "docker run -d -p 3080:3080 kalki2878/react-js-app:2.0"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@52.87.160.165 ${dockerCmd}"
+                        sh "ssh -o StrictHostKeyChecking=no ubuntu@52.87.160.165 ${dockerCmd}"
                         echo "Deploying the application..."
                     }
                 }
