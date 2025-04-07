@@ -26,7 +26,7 @@ pipeline {
             steps {
                 sshagent(['ec2-server-key']) {
                     // Pull the latest image and run a new container
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@52.87.160.165 'docker pull kalki2878/react-js-app:2.0 && docker run -d --name myapp -p 3080:3080 kalki2878/react-js-app:2.0'"
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@18.142.239.7 'docker pull kalki2878/react-js-app:2.0 && docker run -d --name myapp -p 3080:3080 kalki2878/react-js-app:2.0'"
                     echo "Deploying the application..."
                 }
             }
