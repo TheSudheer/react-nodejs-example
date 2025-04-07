@@ -8,7 +8,7 @@ pipeline {
             steps {
                 script {
                     echo "Testing the application..."
-                    sh 'CI=true npm test' || true
+                    sh "CI=true npm test || true"
                 }
             }
         }
