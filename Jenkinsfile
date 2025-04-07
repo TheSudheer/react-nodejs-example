@@ -5,24 +5,29 @@ pipeline {
             steps {
                 script {
                     echo "Testing the application..."
+                    sh 'CI=true npm test'
                 }
             }
         }
-        stage("build") {
+        stage('Docker Build') {
             steps {
-                script {
-                    echo "Building the application..."
+                sh "docker build -t kalki2878/react-js-app:2.0 ."
+            }
+        }
+        stage('Push to Registry') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    sh "echo $DOCKER_PASSWORD | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                    sh "docker push kalki2878/react-js-app:2.0"
                 }
             }
         }
-        stage("deploy") {
+        stage('Deploy') {
             steps {
-                script {
-                    sshagent(['ec2-server-key']) {
-                        def dockerCmd = "docker run -d -p 3080:3080 kalki2878/react-js-app:2.0"
-                        sh "ssh -o StrictHostKeyChecking=no ubuntu@52.87.160.165 ${dockerCmd}"
-                        echo "Deploying the application..."
-                    }
+                sshagent(['ec2-server-key']) {
+                    // Pull the latest image and run a new container
+                    sh "ssh -o StrictHostKeyChecking=no ubuntu@52.87.160.165 'docker pull kalki2878/react-js-app:2.0 && docker run -d --name myapp -p 3080:3080 kalki2878/react-js-app:2.0'"
+                    echo "Deploying the application..."
                 }
             }
         }
